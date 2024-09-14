@@ -1,9 +1,11 @@
+
+Copy code
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Website with Tabs</title>
+    <title>Feature-Rich Website</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,25 +13,21 @@
             padding: 0;
             background-color: #f4f4f4;
         }
-
         header {
             background-color: #333;
             color: #fff;
-            padding: 10px 0;
+            padding: 15px;
             text-align: center;
         }
-
         header h1 {
             margin: 0;
         }
-
         nav {
             display: flex;
             justify-content: center;
             background-color: #444;
             padding: 10px;
         }
-
         nav a {
             color: white;
             padding: 14px 20px;
@@ -38,23 +36,18 @@
             margin: 0 10px;
             border-radius: 5px;
         }
-
         nav a.active, nav a:hover {
             background-color: #007BFF;
         }
-
         #content-container {
             padding: 20px;
         }
-
         .tab-content {
             display: none;
         }
-
         .tab-content.active {
             display: block;
         }
-
         footer {
             background-color: #333;
             color: white;
@@ -64,13 +57,46 @@
             bottom: 0;
             width: 100%;
         }
-
+        iframe {
+            width: 100%;
+            height: 400px;
+            margin: 20px 0;
+        }
+        form {
+            max-width: 500px;
+            margin: auto;
+        }
+        form label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        form input, form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .error {
+            color: red;
+            font-size: 0.9em;
+        }
         /* Responsive Design */
         @media (max-width: 768px) {
             nav {
                 flex-direction: column;
             }
-
             nav a {
                 margin: 5px 0;
             }
@@ -80,40 +106,61 @@
 <body>
 
     <header>
-        <h1>My Interactive Website</h1>
+        <h1>Interactive Website with Features</h1>
     </header>
 
     <nav>
         <a href="#" class="tab-link active" data-tab="home">Home</a>
-        <a href="#" class="tab-link" data-tab="about">About Us</a>
-        <a href="#" class="tab-link" data-tab="services">Services</a>
-        <a href="#" class="tab-link" data-tab="contact">Contact</a>
+        <a href="#" class="tab-link" data-tab="videos">Videos</a>
+        <a href="#" class="tab-link" data-tab="location">Location</a>
+        <a href="#" class="tab-link" data-tab="contact">Contact Us</a>
     </nav>
 
     <div id="content-container">
+        <!-- Home Tab -->
         <div id="home" class="tab-content active">
             <h2>Welcome to Our Website</h2>
-            <p>This is the home section. Enjoy browsing our content and learn more about us!</p>
+            <p>This is the home section. Explore our site using the navigation above!</p>
         </div>
 
-        <div id="about" class="tab-content">
-            <h2>About Us</h2>
-            <p>We are a dynamic company that values innovation and creativity. Our mission is to provide the best services possible.</p>
+        <!-- Videos Tab -->
+        <div id="videos" class="tab-content">
+            <h2>Watch Our Videos</h2>
+            <iframe src="https://www.youtube.com/embed/tgbNymZ7vqY" title="YouTube Video"></iframe>
+            <iframe src="https://player.vimeo.com/video/76979871" title="Vimeo Video"></iframe>
         </div>
 
-        <div id="services" class="tab-content">
-            <h2>Our Services</h2>
-            <ul>
-                <li>Web Development</li>
-                <li>Mobile App Development</li>
-                <li>Digital Marketing</li>
-                <li>Consulting</li>
-            </ul>
+        <!-- Location Tab -->
+        <div id="location" class="tab-content">
+            <h2>Your Current Location</h2>
+            <p>Click the button below to get your location:</p>
+            <button id="get-location-button">Get Location</button>
+            <div id="location-data">
+                <p><strong>Latitude:</strong> <span id="latitude">-</span></p>
+                <p><strong>Longitude:</strong> <span id="longitude">-</span></p>
+                <p><strong>Address:</strong> <span id="address">-</span></p>
+            </div>
         </div>
 
+        <!-- Contact Tab -->
         <div id="contact" class="tab-content">
             <h2>Contact Us</h2>
-            <p>If you have any questions, feel free to reach out to us at contact@example.com or call us at 123-456-7890.</p>
+            <form id="contact-form">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <span class="error" id="name-error"></span>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <span class="error" id="email-error"></span>
+
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" rows="5" required></textarea>
+                <span class="error" id="message-error"></span>
+
+                <button type="submit">Submit</button>
+            </form>
+            <div id="form-status"></div>
         </div>
     </div>
 
@@ -122,31 +169,97 @@
     </footer>
 
     <script>
-        // Get all tab links
+        // Get all tab links and content sections
         const tabLinks = document.querySelectorAll('.tab-link');
-        
-        // Get all tab content sections
         const tabContents = document.querySelectorAll('.tab-content');
 
-        // Add click event listeners to all tabs
+        // Switch between tabs
         tabLinks.forEach(link => {
             link.addEventListener('click', function(event) {
                 event.preventDefault();
 
-                // Remove active class from all links and tabs
+                // Remove active class from all links and content
                 tabLinks.forEach(link => link.classList.remove('active'));
                 tabContents.forEach(content => content.classList.remove('active'));
 
-                // Add active class to clicked tab link
+                // Add active class to clicked link and corresponding content
                 this.classList.add('active');
-
-                // Get the corresponding tab content
                 const tabID = this.getAttribute('data-tab');
-                const activeTabContent = document.getElementById(tabID);
-
-                // Show the corresponding tab content
-                activeTabContent.classList.add('active');
+                document.getElementById(tabID).classList.add('active');
             });
+        });
+
+        // Location API
+        document.getElementById('get-location-button').addEventListener('click', () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(success, error);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        });
+
+        function success(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            document.getElementById('latitude').textContent = latitude;
+            document.getElementById('longitude').textContent = longitude;
+
+            // You can add reverse geocoding API to get address
+            document.getElementById('address').textContent = "Fetching address...";
+            const apiKey = 'YOUR_API_KEY';  // Replace with your OpenCage or other geocoding API key
+            fetch(`https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${apiKey}`)
+                .then(response => response.json())
+                .then(data => {
+                    const address = data.results[0].formatted;
+                    document.getElementById('address').textContent = address;
+                })
+                .catch(() => {
+                    document.getElementById('address').textContent = 'Unable to retrieve address';
+                });
+        }
+
+        function error() {
+            alert('Unable to retrieve your location.');
+        }
+
+        // Contact Form Validation
+        document.getElementById('contact-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Clear previous errors
+            document.getElementById('name-error').textContent = '';
+            document.getElementById('email-error').textContent = '';
+            document.getElementById('message-error').textContent = '';
+            let valid = true;
+
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+
+            // Name validation
+            if (name.length < 3) {
+                document.getElementById('name-error').textContent = 'Name must be at least 3 characters long.';
+                valid = false;
+            }
+
+            // Email validation
+            const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+            if (!email.match(emailPattern)) {
+                document.getElementById('email-error').textContent = 'Please enter a valid email address.';
+                valid = false;
+            }
+
+            // Message validation
+            if (message.length < 10) {
+                document.getElementById('message-error').textContent = 'Message must be at least 10 characters long.';
+                valid = false;
+            }
+
+            if (valid) {
+                document.getElementById('form-status').textContent = 'Form submitted successfully!';
+                this.reset(); // Reset the form
+            }
         });
     </script>
 
