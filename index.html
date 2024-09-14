@@ -3,71 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Interaction Example</title>
+    <title>User Location Example</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 50px;
             background-color: #f4f4f4;
         }
-        #data-container {
+        #location-container {
             margin-top: 20px;
-        }
-        .user {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-bottom: 10px;
             background-color: #fff;
+            padding: 20px;
             border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
         }
         button {
-            padding: 10px 15px;
-            background-color: #4CAF50;
+            padding: 10px 20px;
+            background-color: #007BFF;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
         button:hover {
-            background-color: #45a049;
+            background-color: #0056b3;
+        }
+        .coordinates, .address {
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 
-    <h1>Fetch User Data from an API</h1>
-    <p>Click the button below to fetch user data from the JSONPlaceholder API.</p>
+    <h1>Find Your Location</h1>
+    <p>Click the button below to get your current location.</p>
     
-    <button id="fetch-button">Fetch Users</button>
+    <button id="get-location-button">Get Location</button>
 
-    <div id="data-container"></div>
+    <div id="location-container">
+        <div class="coordinates">
+            <p><strong>Latitude:</strong> <span id="latitude">-</span></p>
+            <p><strong>Longitude:</strong> <span id="longitude">-</span></p>
+        </div>
+        <div class="address">
+            <p><strong>Address:</strong> <span id="address">-</span></p>
+        </div>
+    </div>
 
     <script>
-        // JavaScript for API interaction
-        document.getElementById('fetch-button').addEventListener('click', () => {
-            // Fetch user data from JSONPlaceholder API
-            fetch('https://jsonplaceholder.typicode.com/users')
+        document.getElementById('get-location-button').addEventListener('click', () => {
+            // Check if Geolocation is supported
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(success, error);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        });
+
+        function success(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            // Display the coordinates on the page
+            document.getElementById('latitude').textContent = latitude;
+            document.getElementById('longitude').textContent = longitude;
+
+            // Reverse geocoding to get the address
+            const apiKey = 'YOUR_API_KEY'; // Replace with your OpenCage API key
+            const apiUrl = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${apiKey}`;
+
+            fetch(apiUrl)
                 .then(response => response.json())
                 .then(data => {
-                    const container = document.getElementById('data-container');
-                    container.innerHTML = '';  // Clear previous data
-                    data.forEach(user => {
-                        const userDiv = document.createElement('div');
-                        userDiv.classList.add('user');
-                        userDiv.innerHTML = `
-                            <h3>${user.name}</h3>
-                            <p><strong>Email:</strong> ${user.email}</p>
-                            <p><strong>Phone:</strong> ${user.phone}</p>
-                            <p><strong>Company:</strong> ${user.company.name}</p>
-                        `;
-                        container.appendChild(userDiv);
-                    });
+                    const address = data.results[0].formatted;
+                    document.getElementById('address').textContent = address;
                 })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                    document.getElementById('data-container').innerHTML = '<p>Error fetching data. Please try again later.</p>';
+                .catch(() => {
+                    document.getElementById('address').textContent = 'Unable to retrieve address';
                 });
-        });
+        }
+
+        function error() {
+            alert('Unable to retrieve your location.');
+        }
     </script>
 
 </body>
